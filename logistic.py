@@ -1,10 +1,9 @@
-import pandas as pd
-import numpy as np
-
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+import pandas as pd
+from sklearn.metrics import accuracy_score, log_loss, confusion_matrix
+model=LogisticRegression()
 
 df=pd.read_csv('Data.csv')
 df.columns=['Timestamps','Screen', 'Sleep', 'Major_Assessments', 'Hard_Classes', 'HoursHW', 'Form', 'Stress']
@@ -17,21 +16,11 @@ scaler=MinMaxScaler()
 X_scaled=scaler.fit_transform(X)
 y=df['Stress']
 
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-
-model=LinearRegression()
 model.fit(X_scaled, y)
-
+predictions_prob=model.predict_proba(X)
 predictions=model.predict(X)
-
-binary_prediction=(predictions>=.5).astype(int)
-
-
-accuracy=accuracy_score(y, binary_prediction)
-print(accuracy)
-
-cm=confusion_matrix(y, binary_prediction)
-print('Confusion Matrix:')
-print(cm)
+print(f"Accuracy: {accuracy_score(y, predictions)}")
+print(f"Log Loss: {log_loss(y, predictions_prob)}")
 print(features)
 print(model.coef_)
+print(confusion_matrix(predictions, y))
