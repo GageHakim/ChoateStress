@@ -18,10 +18,27 @@ X_scaled=scaler.fit_transform(X)
 y=df['Stress']
 
 model.fit(X_scaled, y)
-predictions_prob=model.predict_proba(X)
-predictions=model.predict(X)
-print(f"Accuracy: {accuracy_score(y, predictions)}")
-print(f"Log Loss: {log_loss(y, predictions_prob)}")
-print(features)
-print(model.coef_)
-print(confusion_matrix(predictions, y))
+predictions_prob=model.predict_proba(X)[:,1]
+print(model.predict_proba(X))
+scores=[]
+
+for i in range(0,101):
+    threshold=i/100
+    predictions=(predictions_prob>threshold).astype(int)
+    scores.append(accuracy_score(predictions, y)*100)
+
+import matplotlib.pyplot as plt
+print(max(scores), scores.index(max(scores)))
+#so accoridng to this the best threshold which yields an accuracy of 77.78%, .42 is the best threshold
+thresholds=range(0, 101)
+
+fig, ax= plt.subplots()
+
+ax.plot(thresholds, scores)
+
+ax.set(xlabel='Thresholds (%)', ylabel='Accuracy (%)')
+ax.grid()
+
+fig.savefig('Accuracy Graph')
+plt.show()
+
