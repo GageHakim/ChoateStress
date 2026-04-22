@@ -19,5 +19,10 @@ for index, row in data.iterrows():
                 TP += 1
             else:
                 FP += 1
+        else:
+            if row['Stress'] in ['Low', 'Medium']:
+                TN += 1
+            else:
+                FN += 1
 print(f"TP: {TP} TN: {TN} FP: {FP} FN: {FN}")
 print(f"Accuracy: {round(((TP+TN)/(TP+TN+FP+FN))*100)}%")
