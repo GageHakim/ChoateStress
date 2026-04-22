@@ -22,7 +22,7 @@ y=df['Stress']
 model=LinearRegression()
 model.fit(X_scaled, y)
 
-predictions=model.predict(X)
+predictions=model.predict(X_scaled)
 
 binary_prediction=(predictions>=.5).astype(int)
 
@@ -35,3 +35,4 @@ print('Confusion Matrix:')
 print(cm)
 print(features)
 print(model.coef_)
+print(model.intercept_)
