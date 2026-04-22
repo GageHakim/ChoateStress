@@ -18,8 +18,8 @@ X_scaled=scaler.fit_transform(X)
 y=df['Stress']
 
 model.fit(X_scaled, y)
-predictions_prob=model.predict_proba(X)[:,1]
-print(model.predict_proba(X))
+predictions_prob=model.predict_proba(X_scaled)[:,1]
+print(model.predict_proba(X_scaled))
 scores=[]
 
 for i in range(0,101):

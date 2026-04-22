@@ -18,7 +18,7 @@ X_scaled=scaler.fit_transform(X)
 y=df['Stress']
 
 model.fit(X_scaled, y)
-predictions_prob=model.predict_proba(X)[:,1]
+predictions_prob=model.predict_proba(X_scaled)[:,1]
 
 #Precision Recall Graph, not sure why I did it but it came up in documentation so yeah.
 import matplotlib.pyplot as plt
