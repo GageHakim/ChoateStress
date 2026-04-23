@@ -38,18 +38,61 @@ display_ROC_AUC = RocCurveDisplay(tpr=TPR, fpr=FPR)
 
 display_ROC_AUC.plot()
 plt.show()
-
 #Now lets calculate F1. Since I already have precision and recall from the code above so I guess my life is extra easy.
 
-#This code just chooses the non 0 and 100 septiles I guess of the thresholds chosen in the cocde
+#This code just chooses the non 0 and 100 sextiles I guess of the thresholds chosen in the cocde
 #So 5 thresholds are chosen, and the thresholds are pretty much just the predicted probabilties of each value. And hopefully this makes sense since a threshold only matters when a number is greater than it.
 chosen_thresholds=[]
 len_predictions=len(threshold)
-for i in range(1,7):
-    chosen_thresholds.append(int((len_predictions*i)/7))
+for i in range(1,6):
+    chosen_thresholds.append(int((len_predictions*i)/6))
 print(chosen_thresholds)
 
+
 for thresh in chosen_thresholds:
-    print(f"The threshold chosen is {threshold[thresh]}.\n Its Precision is {precision[thresh]} \n Its Recall is {recall[thresh]} \n Its F1 Score is {(2*precision[thresh]*recall[thresh])/(precision[thresh]+recall[thresh])}")
+    print(f"The threshold chosen is {threshold[thresh]}.\n Its Precision is {precision[thresh]} \n Its Recall is {recall[thresh]} \n Its F1 Score is {(2*precision[thresh]*recall[thresh])/(precision[thresh]+recall[thresh])} \n")
+
 
 print(roc_auc_score(y, predictions_prob))
+
+metrics_list = []
+for thresh in chosen_thresholds:
+    threshold_temp=threshold[thresh]
+    # Convert probabilities to binary predictions based on current threshold
+    y_pred = (predictions_prob >= threshold_temp).astype(int)
+
+    # Generate Confusion Matrix
+    # tn, fp, fn, tp = confusion_matrix(y, y_pred).ravel()
+    # Manual calculation to ensure clarity on metric definitions
+    tp = np.sum((y_pred == 1) & (y == 1))
+    tn = np.sum((y_pred == 0) & (y == 0))
+    fp = np.sum((y_pred == 1) & (y == 0))
+    fn = np.sum((y_pred == 0) & (y == 1))
+
+    # Metric Calculations
+    tpr = tp / (tp + fn) if (tp + fn) > 0 else 0  # Recall / Sensitivity
+    tnr = tn / (tn + fp) if (tn + fp) > 0 else 0  # Specificity
+    fpr = fp / (fp + tn) if (fp + tn) > 0 else 0  # 1 - Specificity
+    prec = tp / (tp + fp) if (tp + fp) > 0 else 0
+    rec = tpr
+    f1 = 2 * (prec * rec) / (prec + rec) if (prec + rec) > 0 else 0
+    accuracy = (tp + tn) / len(y)
+
+    metrics_list.append({
+        'Threshold': threshold_temp,
+        'TPR': tpr,
+        'TNR': tnr,
+        'FPR': fpr,
+        'Precision': prec,
+        'Recall': rec,
+        'F1_Score': f1,
+        'Accuracy': accuracy
+    })
+
+# Create DataFrame and Export
+final_df = pd.DataFrame(metrics_list)
+final_df.to_csv('threshold_metrics.csv', index=False)
+
+print("Metrics calculated for chosen thresholds:")
+print(final_df)
+print(f"\nOverall ROC AUC Score: {roc_auc_score(y, predictions_prob)}")
