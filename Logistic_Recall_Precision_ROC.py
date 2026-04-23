@@ -56,7 +56,7 @@ for thresh in chosen_thresholds:
 print(roc_auc_score(y, predictions_prob))
 
 metrics_list = []
-for thresh in chosen_thresholds:
+for thresh in chosen_thresholds: #I could not be bothered so I just did it with gemini: https://gemini.google.com/share/c78049cf4065
     threshold_temp=threshold[thresh]
     # Convert probabilities to binary predictions based on current threshold
     y_pred = (predictions_prob >= threshold_temp).astype(int)
